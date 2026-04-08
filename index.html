@@ -66,7 +66,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-body { min-height: 100vh; }
+body { min-height: 100vh; display: flex; flex-direction: column; }
 
 button, input, textarea { font: inherit; color: inherit; }
 button { background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
@@ -79,21 +79,17 @@ input::placeholder, textarea::placeholder { color: #999; }
 /* ── HEADER ── */
 .site-header {
   border-bottom: var(--line);
-  height: var(--header-h);
 }
 .site-header__inner, .site-main {
   max-width: none; margin: 0 auto;
-  padding-left: var(--pad-x); padding-right: var(--pad-x);
+  padding-left: var(--gap); padding-right: var(--gap);
 }
 .site-header__inner {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  height: 100%;
-  padding-top: 0;
-  padding-bottom: 0;
-  /* vertically center via flex */
   align-items: center;
+  justify-content: space-between;
+  padding-top: var(--gap);
+  padding-bottom: var(--gap);
 }
 
 .brand {
@@ -124,7 +120,8 @@ input::placeholder, textarea::placeholder { color: #999; }
 /* ── MAIN ── */
 .site-main {
   padding-top: 0; padding-bottom: 0;
-  height: calc(100vh - var(--header-h));
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -408,7 +405,7 @@ input::placeholder, textarea::placeholder { color: #999; }
 
 @media (max-width: 767px) {
   :root {
-    --pad-x: 14px;
+    --pad-x: 10px;
     --title-main: 20px;
     --title-open: 20px;
     --detail-title: 20px;
