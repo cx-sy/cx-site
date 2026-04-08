@@ -6,8 +6,8 @@
 <title>CX works index</title>
 <style>
 @font-face {
-  font-family: 'CXTestFont';
-  src: url('./public/fonts/ABC Whyte Hangul Inktrap Regular.woff2') format('woff2');
+  font-family: 'CXBaseFont';
+  src: url('./public/fonts/ABC Whyte Hangul Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 }
 @font-face {
   font-family: 'CXBookFont';
-  src: url('./public/fonts/ABC Whyte Hangul Inktrap Book.woff2') format('woff2');
+  src: url('./public/fonts/ABC Whyte Hangul Book.woff2') format('woff2');
   font-weight: 450;
   font-style: normal;
   font-display: swap;
@@ -53,11 +53,15 @@
 
 * { box-sizing: border-box; }
 
+/* Hide scrollbars but keep scroll */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
 html, body {
   margin: 0; padding: 0;
   background: var(--white);
   color: var(--black);
-  font-family: 'CXTestFont', Arial, Helvetica, sans-serif;
+  font-family: 'CXBaseFont', Arial, Helvetica, sans-serif;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -93,7 +97,7 @@ input::placeholder, textarea::placeholder { color: #999; }
 }
 
 .brand {
-  font-family: 'CXBoldFont', 'CXTestFont', Arial, Helvetica, sans-serif;
+  font-family: 'CXBoldFont', 'CXBaseFont', Arial, Helvetica, sans-serif;
   font-size: 50px;
   font-weight: 700;
   line-height: 1;
@@ -172,13 +176,17 @@ input::placeholder, textarea::placeholder { color: #999; }
 
 .project-item {
   display: block; width: 100%; text-align: left;
-  border-top: var(--line); padding-top: 0;
+  border-top: var(--line); padding: 0 var(--gap);
+  margin: 0 calc(var(--gap) * -1);
+  width: calc(100% + var(--gap) * 2);
+  transition: background 180ms ease;
 }
 .project-item:first-child { border-top: 0; }
 .project-item:hover { opacity: 1; }
 
 /* Active state */
-.project-item.is-active .project-row { background: #fff; color: #000; }
+.project-item.is-active { background: #fff; }
+.project-item.is-active .project-row { color: #000; }
 .project-item.is-active .project-title,
 .project-item.is-active .project-year,
 .project-item.is-active .project-client { color: #000; }
@@ -187,7 +195,8 @@ input::placeholder, textarea::placeholder { color: #999; }
 .project-item.is-active .meta-grid { transform: none; }
 
 /* Hover state */
-.project-item:hover .project-row { background: #000; color: #fff; }
+.project-item:hover { background: #000; color: #fff; }
+.project-item:hover .project-row { color: #fff; }
 .project-item:hover .meta-grid { transform: translateX(var(--hover-shift)); }
 .project-item:hover .project-title,
 .project-item:hover .project-year,
@@ -203,7 +212,7 @@ input::placeholder, textarea::placeholder { color: #999; }
   grid-template-columns: var(--thumb-w) minmax(0, 1fr);
   column-gap: var(--gap); align-items: start;
   overflow: visible; padding: var(--gap) 0;
-  transition: background 180ms ease, color 180ms ease;
+  transition: color 180ms ease;
 }
 
 .thumb-wrap {
@@ -268,7 +277,7 @@ input::placeholder, textarea::placeholder { color: #999; }
   min-height: 24px; padding: 4px 12px;
   border: 1px solid #000; border-radius: 999px;
   background: #000; color: #fff;
-  font-family: 'CXBookFont', 'CXTestFont', Arial, Helvetica, sans-serif;
+  font-family: 'CXBookFont', 'CXBaseFont', Arial, Helvetica, sans-serif;
   font-size: var(--text-2); line-height: 1;
   white-space: nowrap;
   text-transform: capitalize;
@@ -361,6 +370,19 @@ input::placeholder, textarea::placeholder { color: #999; }
   font-size: var(--text-1); line-height: 1; font-weight: 400;
 }
 
+/* ── HAMBURGER ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 24px; height: 24px;
+  background: none; border: none; padding: 0; cursor: pointer;
+}
+.hamburger span {
+  display: block; width: 100%; height: 1px; background: #000;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1279px) {
   .site-main { height: auto; overflow: visible; }
@@ -397,6 +419,39 @@ input::placeholder, textarea::placeholder { color: #999; }
   .thumb-wrap, .thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; }
   .meta-grid { min-height: auto; transform: none !important; }
   .project-item:hover .thumb { transform: none; }
+  .project-item { margin: 0; width: 100%; padding: 0; }
+
+  /* Mobile: detail open → hide index, show hamburger */
+  .layout.is-open .index-column {
+    display: none;
+  }
+  .layout.is-open .hamburger {
+    display: flex;
+  }
+  .layout.is-open .header-nav {
+    display: none;
+  }
+  .layout.is-open .detail-column {
+    border-left: none;
+    border-top: none;
+    padding: 0;
+  }
+  .contact-column { display: none; }
+  .layout.is-open .contact-column { display: none; }
+
+  /* Mobile index overlay when hamburger toggled */
+  .index-column.mobile-overlay {
+    display: block !important;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 100;
+    background: #fff;
+    padding: var(--pad-x);
+    padding-top: calc(var(--header-h) + var(--gap));
+    overflow-y: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
 </style>
 </head>
@@ -405,6 +460,9 @@ input::placeholder, textarea::placeholder { color: #999; }
 <header class="site-header">
   <div class="site-header__inner">
     <div class="brand">CX</div>
+    <button class="hamburger" id="hamburgerButton" type="button" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
     <nav class="header-nav">
       <div class="header-label"><a href="#">Works</a></div>
       <div class="header-label"><a href="#">About</a></div>
@@ -530,8 +588,29 @@ function renderState() {
   else { detailHeaderContent.innerHTML = ''; detailContent.innerHTML = ''; }
 }
 
-closeButton.addEventListener('click', () => { activeId = null; renderState(); });
+closeButton.addEventListener('click', () => {
+  activeId = null;
+  indexColumn.classList.remove('mobile-overlay');
+  renderState();
+});
+
+// Hamburger toggle (mobile)
+const hamburgerButton = document.getElementById('hamburgerButton');
+hamburgerButton.addEventListener('click', () => {
+  indexColumn.classList.toggle('mobile-overlay');
+});
+
+// Close mobile overlay when selecting a project
+function attachMobileClose() {
+  projectList.querySelectorAll('.project-item').forEach(button => {
+    button.addEventListener('click', () => {
+      indexColumn.classList.remove('mobile-overlay');
+    });
+  });
+}
+
 renderList();
+attachMobileClose();
 renderState();
 </script>
 </body>
