@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CX works index</title>
+<style>
+@font-face {
+  font-family: 'CXTestFont';
+  src: url('./public/fonts/ABC Whyte Hangul Inktrap Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'CXBoldFont';
+  src: url('./public/fonts/ABC Whyte Hangul Inktrap Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'CXBookFont';
+  src: url('./public/fonts/ABC Whyte Hangul Inktrap Book.woff2') format('woff2');
+  font-weight: 450;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --black: #000;
+  --white: #fff;
+  --line: 1px solid #000;
+  --gap: 10px;           /* unified spacing unit */
+  --pad-x: var(--gap);
+  --pad-y: var(--gap);
+
+  /* Font sizes — scaled ~1.5x from original */
+  --text-1: 11px;
+  --text-2: 13px;
+  --text-3: 14px;
+  --title-main: 26px;
+  --title-open: 22px;
+  --detail-title: 24px;
+
+  --thumb-w: 240px;
+  --thumb-h: 135px;
+  --hover-shift: 48px;
+  --contact-w: 340px;
+  --detail-w: 50vw;
+  --header-h: 80px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--white);
+  color: var(--black);
+  font-family: 'CXTestFont', Arial, Helvetica, sans-serif;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body { min-height: 100vh; }
+
+button, input, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
+input, textarea {
+  width: 100%; border: none; border-radius: 0;
+  background: #f3f3f3; padding: 12px 14px; outline: none;
+}
+input::placeholder, textarea::placeholder { color: #999; }
+
+/* ── HEADER ── */
+.site-header {
+  border-bottom: var(--line);
+  height: var(--header-h);
+}
+.site-header__inner, .site-main {
+  max-width: none; margin: 0 auto;
+  padding-left: var(--pad-x); padding-right: var(--pad-x);
+}
+.site-header__inner {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  height: 100%;
+  padding-top: 0;
+  padding-bottom: 0;
+  /* vertically center via flex */
+  align-items: center;
+}
+
+.brand {
+  font-family: 'CXBoldFont', 'CXTestFont', Arial, Helvetica, sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+}
+.header-label {
+  font-size: var(--title-main);
+  line-height: 1;
+  font-weight: 400;
+}
+.header-label a {
+  color: inherit;
+  text-decoration: none;
+}
+.header-label a:hover {
+  opacity: 0.5;
+}
+
+/* ── MAIN ── */
+.site-main {
+  padding-top: 0; padding-bottom: 0;
+  height: calc(100vh - var(--header-h));
+  overflow: hidden;
+}
+
+.layout {
+  display: grid; gap: 0;
+  grid-template-columns: minmax(0, 1fr) var(--contact-w);
+  height: 100%; min-height: 0;
+}
+.layout.is-open {
+  grid-template-columns: minmax(0, 1fr) var(--detail-w) var(--contact-w);
+}
+
+/* ── INDEX COLUMN ── */
+.index-column {
+  height: 100%; overflow-y: auto; padding-bottom: 24px;
+  position: relative;
+}
+.index-column.open {
+  padding-right: var(--gap);
+  -webkit-mask-image: linear-gradient(to right, #000 75%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 75%, transparent 100%);
+}
+
+/* ── DETAIL COLUMN ── */
+.detail-column {
+  display: none; height: 100%; overflow: hidden;
+}
+.layout.is-open .detail-column {
+  display: block;
+  border-left: var(--line);
+  padding: 0 var(--gap);
+}
+
+/* ── CONTACT COLUMN ── */
+.contact-column {
+  border-left: var(--line);
+  padding-top: var(--gap); padding-left: var(--gap);
+  height: 100%; overflow-y: auto; padding-bottom: 24px;
+}
+
+.button-text {
+  font-size: var(--text-2); line-height: 1.2; font-weight: 400;
+}
+
+/* ── PROJECT LIST ── */
+.project-list {
+  display: flex; flex-direction: column; gap: 0; overflow: visible;
+}
+
+.project-item {
+  display: block; width: 100%; text-align: left;
+  border-top: var(--line); padding-top: 0;
+}
+.project-item:first-child { border-top: 0; }
+.project-item:hover { opacity: 1; }
+
+/* Active state */
+.project-item.is-active .project-row { background: #fff; color: #000; }
+.project-item.is-active .project-title,
+.project-item.is-active .project-year,
+.project-item.is-active .project-client { color: #000; }
+.project-item.is-active .tag { background: #000; color: #fff; border-color: #000; }
+.project-item.is-active .thumb-wrap { background: #fff; }
+.project-item.is-active .meta-grid { transform: none; }
+
+/* Hover state */
+.project-item:hover .project-row { background: #000; color: #fff; }
+.project-item:hover .meta-grid { transform: translateX(var(--hover-shift)); }
+.project-item:hover .project-title,
+.project-item:hover .project-year,
+.project-item:hover .project-client { color: #fff; }
+.project-item:hover .tag { background: #fff; color: #000; border-color: #fff; }
+.project-item:hover .thumb-wrap { background: #000; }
+.project-item:hover .thumb {
+  transform: scaleX(1.18); transform-origin: left center;
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: var(--thumb-w) minmax(0, 1fr);
+  column-gap: var(--gap); align-items: start;
+  overflow: visible; padding: var(--gap) 0;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.thumb-wrap {
+  width: var(--thumb-w); height: var(--thumb-h);
+  display: flex; align-items: center; justify-content: flex-start;
+  background: transparent; transition: background 180ms ease;
+  overflow: visible; flex: 0 0 auto;
+}
+.thumb {
+  width: var(--thumb-w); height: var(--thumb-h);
+  background: #ddd; transition: transform 220ms ease;
+  will-change: transform; position: relative; z-index: 1; flex: 0 0 auto;
+}
+
+.meta-grid {
+  display: grid; grid-template-columns: 1fr;
+  row-gap: 5px; align-content: start;
+  align-items: start; justify-items: start;
+  min-width: 0; min-height: var(--thumb-h);
+  padding-top: 0;
+  transition: color 180ms ease, transform 220ms ease;
+  text-align: left;
+}
+
+.project-title {
+  margin: 0;
+  font-size: var(--title-main);
+  line-height: 1.08;
+  font-weight: 400;
+  text-align: left;
+}
+.layout.is-open .project-title {
+  font-size: var(--title-open);
+}
+
+.project-client, .project-year,
+.detail-client, .detail-year,
+.detail-summary, .contact-heading, .field {
+  font-weight: 400;
+}
+
+.project-client, .detail-client, .detail-summary, .field {
+  font-size: var(--text-3);
+  line-height: 1.35;
+  text-align: left;
+}
+.project-year, .detail-year {
+  font-size: var(--text-2);
+  line-height: 1.2;
+  text-align: left;
+}
+
+/* ── TAGS ── */
+.tag-list, .detail-tags {
+  display: flex; flex-wrap: wrap; gap: 2px;
+}
+.tag-list { padding-top: 5px; }
+.detail-tags { margin-top: 10px; }
+
+.tag {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 24px; padding: 4px 12px;
+  border: 1px solid #000; border-radius: 999px;
+  background: #000; color: #fff;
+  font-family: 'CXBookFont', 'CXTestFont', Arial, Helvetica, sans-serif;
+  font-size: var(--text-2); line-height: 1;
+  white-space: nowrap;
+  text-transform: capitalize;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+/* ── DETAIL ── */
+.detail-shell {
+  display: flex; flex-direction: column; height: 100%; min-height: 0;
+  position: relative;
+}
+.detail-header {
+  flex: 0 0 auto; position: sticky; top: 0;
+  background: #fff; z-index: 3; padding-bottom: var(--gap); padding-top: var(--gap);
+}
+.detail-topbar {
+  display: none;
+}
+.contact-topbar {
+  display: none;
+}
+.close-button {
+  position: absolute;
+  top: var(--gap); right: 0;
+  z-index: 10;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  line-height: 1;
+  background: none; border: none; padding: 0;
+  cursor: pointer;
+}
+.close-button::before,
+.close-button::after {
+  content: '';
+  position: absolute;
+  width: 26px; height: 1px;
+  background: #000;
+  top: 50%; left: 50%;
+}
+.close-button::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.close-button::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.close-button:hover, .send-button:hover { opacity: 0.7; }
+
+.detail-scroll {
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; padding-bottom: 24px;
+}
+
+.detail-hero, .detail-block { width: 100%; background: #ddd; }
+.detail-hero { aspect-ratio: 16 / 9; }
+
+.detail-title {
+  margin: 0;
+  font-size: var(--detail-title); line-height: 1.08; font-weight: 400;
+}
+.detail-client-year {
+  margin-top: 6px;
+  font-size: var(--text-3);
+  line-height: 1.35;
+}
+.detail-summary { margin-top: 4px; }
+
+.detail-gallery {
+  display: flex; flex-direction: column; gap: var(--gap); margin-top: 0;
+}
+.detail-block--wide { aspect-ratio: 16 / 9; }
+.detail-block--pair {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap);
+}
+.detail-block--vertical { aspect-ratio: 4 / 5; }
+.detail-block--medium { aspect-ratio: 3 / 2; }
+
+/* ── CONTACT ── */
+.contact-heading {
+  margin: 0;
+  font-size: var(--title-main);
+  line-height: 1.08;
+}
+.contact-form {
+  display: grid; gap: 10px; margin-top: var(--gap);
+}
+.field { font-size: var(--text-3); line-height: 1.2; }
+.send-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #000; padding: 11px 14px;
+  font-size: var(--text-1); line-height: 1; font-weight: 400;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1279px) {
+  .site-main { height: auto; overflow: visible; }
+  .layout, .layout.is-open { grid-template-columns: 1fr; height: auto; }
+  .index-column, .detail-column, .contact-column { height: auto; overflow: visible; }
+  .index-column.open,
+  .layout.is-open .detail-column,
+  .contact-column { border-right: 0; padding-right: 0; padding-left: 0; }
+  .detail-column { display: none; }
+  .layout.is-open .detail-column {
+    display: block; border-top: var(--line); border-right: 0;
+    padding: 20px 0 0 0;
+  }
+  .detail-header { position: static; padding-bottom: 12px; }
+  .detail-scroll { overflow: visible; padding-bottom: 0; }
+  .contact-column {
+    border-top: var(--line); border-left: 0;
+    margin-top: 20px; padding-top: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --pad-x: 14px;
+    --title-main: 20px;
+    --title-open: 20px;
+    --detail-title: 20px;
+    --thumb-w: 100%;
+    --thumb-h: auto;
+    --hover-shift: 0px;
+  }
+  .brand { font-size: 30px; }
+  .project-row { grid-template-columns: 1fr; row-gap: 12px; }
+  .thumb-wrap, .thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  .meta-grid { min-height: auto; transform: none !important; }
+  .project-item:hover .thumb { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <div class="brand">CX</div>
+    <nav class="header-nav">
+      <div class="header-label"><a href="#">Works</a></div>
+      <div class="header-label"><a href="#">About</a></div>
+      <div class="header-label"><a href="#">Archive</a></div>
+    </nav>
+  </div>
+</header>
+
+<main class="site-main">
+  <div class="layout" id="layout">
+
+    <section class="index-column" id="indexColumn">
+      <div class="project-list" id="projectList"></div>
+    </section>
+
+    <section class="detail-column" id="detailColumn">
+      <div class="detail-shell">
+        <button class="close-button" id="closeButton" type="button" aria-label="close"></button>
+        <div class="detail-header">
+          <div id="detailHeaderContent"></div>
+        </div>
+        <div class="detail-scroll">
+          <article id="detailContent"></article>
+        </div>
+      </div>
+    </section>
+
+    <aside class="contact-column">
+      <div class="contact-topbar"></div>
+      <div>
+        <h2 class="contact-heading">Project inquiries</h2>
+        <form class="contact-form">
+          <input class="field" type="text" placeholder="name / organization" />
+          <input class="field" type="email" placeholder="email" />
+          <input class="field" type="text" placeholder="project type" />
+          <textarea class="field" rows="7" placeholder="brief description"></textarea>
+          <div><button class="send-button" type="submit">send inquiry</button></div>
+        </form>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<script>
+const projects = [
+  { id:1, title:'Galaxy unpacked media briefing deck', year:'2026', client:'Samsung Electronics MX', tags:['presentation','narrative','mobile'], summary:'제품 메시지를 발표 흐름에 맞게 구조화한 시리즈.', colors:['#d6d3d1','#e7e5e4','#d4d4d4','#d4d4d8','#a8a29e','#e5e5e5'] },
+  { id:2, title:'Intelligent office insight series', year:'2025', client:'Samsung B2B Integrated Offering', tags:['editorial','b2b','system'], summary:'스마트 오피스 사례를 구조화한 콘텐츠 시리즈.', colors:['#d4d4d8','#e4e4e7','#d4d4d4','#d6d3d1','#a1a1aa','#e5e5e5'] },
+  { id:3, title:'CX creative knowledge system', year:'2026', client:'CX', tags:['archive','documentation','system'], summary:'프로젝트 자산과 메시지 구조를 축적하는 내부 시스템.', colors:['#a3a3a3','#d4d4d4','#d4d4d8','#e7e5e4','#e5e5e5','#e4e4e7'] },
+  { id:4, title:'Discover seoul pass global promotion proposal', year:'2025', client:'Seoul Tourism / Proposal', tags:['campaign','strategy','presentation'], summary:'글로벌 타깃과 채널을 고려한 제안 구조 설계.', colors:['#a8a29e','#d6d3d1','#d4d4d4','#e4e4e7','#e7e5e4','#e5e5e5'] },
+  { id:5, title:'Future space platform insight archive', year:'2025', client:'Samsung B2B Integrated Offering', tags:['editorial','office','documentation'], summary:'기술과 경험을 함께 정리한 아카이브형 콘텐츠.', colors:['#a1a1aa','#d4d4d8','#d4d4d4','#e7e5e4','#e4e4e7','#e5e5e5'] },
+  { id:6, title:'Genesis road trip direction planning', year:'2024', client:'Genesis', tags:['direction','narrative','campaign'], summary:'브랜드 여정 전체를 하나의 서사로 구성한 프로젝트.', colors:['#d4d4d4','#d6d3d1','#d4d4d8','#e5e5e5','#e7e5e4','#e4e4e7'] }
+];
+
+const layout = document.getElementById('layout');
+const indexColumn = document.getElementById('indexColumn');
+const projectList = document.getElementById('projectList');
+const detailHeaderContent = document.getElementById('detailHeaderContent');
+const detailContent = document.getElementById('detailContent');
+const closeButton = document.getElementById('closeButton');
+let activeId = null;
+
+function tagHTML(tags) {
+  return tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+}
+
+function renderList() {
+  projectList.innerHTML = projects.map(project => `
+    <button class="project-item" type="button" data-id="${project.id}">
+      <div class="project-row">
+        <div class="thumb-wrap">
+          <div class="thumb" style="background:${project.colors[0]}"></div>
+        </div>
+        <div class="meta-grid">
+          <h2 class="project-title">${project.title}</h2>
+          <div class="project-client">${project.client}</div>
+          <div class="project-year">${project.year}</div>
+          <div class="tag-list">${tagHTML(project.tags)}</div>
+        </div>
+      </div>
+    </button>
+  `).join('');
+  projectList.querySelectorAll('.project-item').forEach(button => {
+    button.addEventListener('click', () => {
+      activeId = Number(button.dataset.id);
+      renderState();
+    });
+  });
+}
+
+function renderDetail() {
+  const project = projects.find(item => item.id === activeId);
+  if (!project) { detailHeaderContent.innerHTML = ''; detailContent.innerHTML = ''; return; }
+  detailHeaderContent.innerHTML = `
+    <h1 class="detail-title">${project.title}</h1>
+    <div class="detail-client-year">${project.client} | ${project.year}</div>
+    <div class="detail-summary">${project.summary}</div>
+    <div class="detail-tags">${tagHTML(project.tags)}</div>
+  `;
+  detailContent.innerHTML = `
+    <div class="detail-gallery">
+      <div class="detail-hero" style="background:${project.colors[0]}"></div>
+      <div class="detail-block detail-block--wide" style="background:${project.colors[1]}"></div>
+      <div class="detail-block--pair">
+        <div class="detail-block detail-block--vertical" style="background:${project.colors[2]}"></div>
+        <div class="detail-block detail-block--vertical" style="background:${project.colors[3]}"></div>
+      </div>
+      <div class="detail-block detail-block--medium" style="background:${project.colors[4]}"></div>
+      <div class="detail-block detail-block--wide" style="background:${project.colors[5]}"></div>
+    </div>
+  `;
+}
+
+function renderState() {
+  const isOpen = activeId !== null;
+  layout.classList.toggle('is-open', isOpen);
+  indexColumn.classList.toggle('open', isOpen);
+  projectList.querySelectorAll('.project-item').forEach(button => {
+    const buttonId = Number(button.dataset.id);
+    button.classList.toggle('is-active', isOpen && buttonId === activeId);
+  });
+  if (isOpen) { renderDetail(); }
+  else { detailHeaderContent.innerHTML = ''; detailContent.innerHTML = ''; }
+}
+
+closeButton.addEventListener('click', () => { activeId = null; renderState(); });
+renderList();
+renderState();
+</script>
+</body>
+</html>
